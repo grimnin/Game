@@ -15,12 +15,15 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
     private Ship spaceShip;
     private ImageIcon background;
     private List<Meteor> meteors;
-    private int meteorSpeed = 5;
+    private final int meteorSpeed = 5;
     private int numberOfMeteors;
+    private Interactions interactions; // Declare interactions field here
+    private boolean isGameOver = false;
 
     public SpaceShipComponent() {
         initializeUI();
         setupGame();
+        Sounds sounds = new Sounds();
     }
 
     private void initializeUI() {
@@ -47,6 +50,9 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         for (int i = 0; i < numberOfMeteors; i++) {
             meteors.add(new Meteor(i * 75, -i * 100, meteorSpeed));
         }
+
+        // Initialize interactions here
+        interactions = new Interactions(spaceShip, meteors);
     }
 
     @Override
@@ -59,6 +65,10 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         // Initialize the spaceShip where the size of the component is known
         if (spaceShip == null) {
             spaceShip = new Ship(getWidth(), getHeight());
+            // Set spaceShip in Interactions
+            if (interactions != null) {
+                interactions.setSpaceShip(spaceShip);
+            }
         }
 
         // Draw the spaceship
@@ -80,15 +90,14 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         for (int i = 0; i < meteors.size(); i++) {
             for (int j = 0; j < meteors.size(); j++) {
                 if (i != j && meteors.get(i).getBounds().intersects(meteors.get(j).getBounds())) {
-                    // Collision! Reset positions
+                    // Collision between meteors! Reset positions
                     meteors.get(i).resetPosition();
                     meteors.get(j).resetPosition();
                 }
             }
         }
     }
-
-    private void moveShip() {
+private void moveShip() {
         if (spaceShip == null) {
             return;
         }
@@ -101,6 +110,12 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
     public void actionPerformed(ActionEvent e) {
         moveShip();
         moveMeteors();
+
+        // Check for collisions only if interactions is not null
+        if (interactions != null) {
+            interactions.checkCollisions();
+        }
+
         checkCollisions();
 
         // Add new meteors if necessary
