@@ -29,7 +29,7 @@ public class Meteor {
 
     public void move() {
         y += speed;
-
+            // Dodaj finalnie zmienna getHeight
         if (y > 600) {
             resetPosition();
         }
@@ -40,11 +40,16 @@ public class Meteor {
     }
 
     public void resetPosition() {
-        Random random = new Random();
-        x = random.nextInt(800 - meteorIcon.getIconWidth()); // Adjust as needed
-        y = -random.nextInt(500) - meteorIcon.getIconHeight(); // Adjust as needed
-        collisionDetected = false;  // Reset collision detection for the next round
-    }
+    Random random = new Random();
+    x = random.nextInt(800 - meteorIcon.getIconWidth());
+    y = -random.nextInt(500) - meteorIcon.getIconHeight();
+    collisionDetected = false;
+
+    // Remove the following line to avoid modifying the list during iteration
+    // meteors.remove(this);
+}
+
+
 
     public boolean isCollisionDetected() {
         return collisionDetected;
