@@ -11,6 +11,9 @@ public class Fuel {
     private int speed;
     private double rotationAngle;
     private boolean isFuelGenerated;
+    private int capacity;
+    private int can;
+    private boolean collisionDetected;
 
     public Fuel(int screenWidth, int screenHeight, int speed) {
         this.speed = speed;
@@ -25,10 +28,12 @@ public class Fuel {
         this.fuelIcon = new ImageIcon(fuelImage.getScaledInstance(fuelIconWidth, fuelIconHeight, Image.SCALE_DEFAULT));
 
         Random random = new Random();
-        x = random.nextInt(screenWidth - fuelIconWidth,1) + 40; // Ensure screenWidth > fuelIconWidth
+        x = random.nextInt(screenWidth - 2*fuelIconWidth,20) + 1; // Ensure screenWidth > fuelIconWidth
         y = -random.nextInt(screenHeight - fuelIconHeight,1) - fuelIconHeight; // Ensure a valid initial position
         rotationAngle = 0;  // Initial rotation angle
         isFuelGenerated = true;  // Initial setting to true
+        capacity=1000;
+        can=250;
     }
 
     public void draw(Graphics g) {
@@ -45,26 +50,39 @@ public class Fuel {
         g2d.setTransform(originalTransform);
     }
 
-    public void move() {
+    public void decreaseCapacity() {
+        // Adjust the amount to decrease the capacity by in each iteration
+        int decreaseAmount = 1; // You can change this value as needed
+        if (capacity > 0) {
+            capacity -= decreaseAmount;
+        }
+    }
+    
+    public void move(int width,int heigth) {
         y += speed;
         rotationAngle += 5;  // Increment the rotation angle
 
         if (y > 600) {
-            resetPosition();
+            resetPosition(width,heigth);
+            System.out.println("Pojemność: "+capacity);
         }
+
+        decreaseCapacity(); // Call the method to decrease the capacity
     }
 
     public Rectangle getBounds() {
         return new Rectangle(x, y, fuelIcon.getIconWidth(), fuelIcon.getIconHeight());
     }
 
-    public void resetPosition() {
-        Random random = new Random();
-        x = random.nextInt(800 - fuelIcon.getIconWidth()) + 40; // Adjust as needed
-        y = -random.nextInt(600) - fuelIcon.getIconHeight();   // Adjust as needed
-        rotationAngle = 0;  // Reset rotation angle
-        isFuelGenerated = false;  // Allow fuel to be generated again
-    }
+    public void resetPosition(int width,int heigth) {
+    Random random = new Random();
+    x = random.nextInt(width - 2*fuelIcon.getIconWidth())+1 ; // Adjust as needed
+    y = -random.nextInt(heigth) - fuelIcon.getIconHeight();   // Adjust as needed
+    rotationAngle = 0;  // Reset rotation angle
+    isFuelGenerated = true;  // Set isFuelGenerated to true
+    collisionDetected = false;  // Reset collision detection
+}
+
 
     public boolean isFuelGenerated() {
         return isFuelGenerated;
@@ -73,4 +91,20 @@ public class Fuel {
     public void setFuelGenerated(boolean fuelGenerated) {
         isFuelGenerated = fuelGenerated;
     }
+
+    public int getCapacity() {
+        return capacity;
+    }
+    
+    public void addfuel(){capacity+=can;}
+    
+    
+    public boolean isCollisionDetected() {
+        return collisionDetected;
+    }
+
+    public void setCollisionDetected(boolean collisionDetected) {
+        this.collisionDetected = collisionDetected;
+    }
+    
 }
