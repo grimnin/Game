@@ -28,7 +28,7 @@ public class Fuel {
         this.fuelIcon = new ImageIcon(fuelImage.getScaledInstance(fuelIconWidth, fuelIconHeight, Image.SCALE_DEFAULT));
 
         Random random = new Random();
-        x = random.nextInt(screenWidth - 2*fuelIconWidth,20) + 1; // Ensure screenWidth > fuelIconWidth
+        x = random.nextInt(screenWidth - 2*fuelIconWidth,1) + 55; // Ensure screenWidth > fuelIconWidth
         y = -random.nextInt(screenHeight - fuelIconHeight,1) - fuelIconHeight; // Ensure a valid initial position
         rotationAngle = 0;  // Initial rotation angle
         isFuelGenerated = true;  // Initial setting to true
@@ -76,7 +76,7 @@ public class Fuel {
 
     public void resetPosition(int width,int heigth) {
     Random random = new Random();
-    x = random.nextInt(width - 2*fuelIcon.getIconWidth())+1 ; // Adjust as needed
+    x = random.nextInt(width - 2*fuelIcon.getIconWidth())+40 ; // Adjust as needed
     y = -random.nextInt(heigth) - fuelIcon.getIconHeight();   // Adjust as needed
     rotationAngle = 0;  // Reset rotation angle
     isFuelGenerated = true;  // Set isFuelGenerated to true

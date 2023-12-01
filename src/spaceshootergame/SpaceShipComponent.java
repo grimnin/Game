@@ -14,7 +14,7 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
     private Ship spaceShip;
     private ImageIcon background;
     private List<Meteor> meteors;
-    private final int meteorSpeed = 20;
+    private final int meteorSpeed = 5;
     private int numberOfMeteors;
     private Interactions interactions;
     private Fuel fuel;
@@ -44,12 +44,13 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
             meteors.add(new Meteor(i * 75, -i * 100, meteorSpeed));
         }
 
-        interactions = new Interactions(spaceShip, meteors);
+        
 
         // Generate only one fuel object
         if (fuel == null || !fuel.isFuelGenerated()) {
             fuel = new Fuel(getWidth(), getHeight(), meteorSpeed);
         }
+        interactions = new Interactions(spaceShip, meteors,fuel);
     }
 
     @Override
@@ -85,7 +86,7 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
 
     private void moveFuel() {
         if (fuel != null) {
-            fuel.move();
+            fuel.move(getWidth(), getHeight());
 
             // Check for collisions between fuel and meteors
             for (Meteor meteor : meteors) {
@@ -100,7 +101,7 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
     private void resetFuelPositionIfCollision(Meteor meteor) {
         Rectangle meteorBounds = meteor.getBounds();
         while (fuel.getBounds().intersects(meteorBounds)) {
-            fuel.resetPosition();
+            fuel.resetPosition(getWidth(), getHeight());
         }
     }
 

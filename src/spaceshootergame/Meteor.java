@@ -9,6 +9,7 @@ public class Meteor {
     private int x, y;
     private int speed;
     private boolean collisionDetected;  // New field to track collision detection
+    
 
     public Meteor(int x, int y, int speed) {
         this.x = x;

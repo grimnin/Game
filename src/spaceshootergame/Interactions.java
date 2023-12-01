@@ -7,7 +7,7 @@ public class Interactions {
 
     private Ship spaceShip;
     private List<Meteor> meteors;
-    private int counter=0;
+    private int life=0;
     private Fuel fuel;
 
     public Interactions(Ship spaceShip, List<Meteor> meteors,Fuel fuel) {
@@ -44,9 +44,12 @@ public class Interactions {
         // For example, you can set a flag for game over or take other actions
         meteor.setCollisionDetected(true);  // Mark collision as detected for this meteor
         System.out.println("Collision detected with meteor!");
-        counter++;
-        System.out.println(counter);
+        life++;
+        System.out.println(life);
         meteor.resetPosition();
+        if (life==3){
+            System.out.println("Koniec gry");
+        }
     }
     
     private void handleCollision(Fuel fuel) {
