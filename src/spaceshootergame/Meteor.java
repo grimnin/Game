@@ -9,6 +9,7 @@ public class Meteor {
     private int x, y;
     private int speed;
     private boolean collisionDetected;  // New field to track collision detection
+    private int width,height;
     
 
     public Meteor(int x, int y, int speed) {
@@ -21,7 +22,9 @@ public class Meteor {
         Image meteorImage = new ImageIcon(getClass().getResource("/pictures/meteor.png")).getImage();
 
         // Set the scaled instance of the loaded image
-        this.meteorIcon = new ImageIcon(meteorImage.getScaledInstance(125, 125, Image.SCALE_DEFAULT));
+        width=125;
+        height=125;
+        this.meteorIcon = new ImageIcon(meteorImage.getScaledInstance(width, height, Image.SCALE_DEFAULT));
     }
 
     public void draw(Graphics g) {
@@ -59,4 +62,31 @@ public class Meteor {
     public void setCollisionDetected(boolean collisionDetected) {
         this.collisionDetected = collisionDetected;
     }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+    
+    
+    
 }

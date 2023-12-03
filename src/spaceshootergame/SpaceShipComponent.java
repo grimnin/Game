@@ -57,7 +57,7 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         if (fuel == null || !fuel.isFuelGenerated()) {
             fuel = new Fuel(getWidth(), getHeight(), meteorSpeed);
         }
-        interactions = new Interactions(spaceShip, meteors, fuel);
+        interactions = new Interactions(spaceShip, meteors, fuel,bullets);
     }
 
     @Override
@@ -129,6 +129,7 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
                 if (i != j && meteors.get(i).getBounds().intersects(meteors.get(j).getBounds())) {
                     meteors.get(i).resetPosition();
                     meteors.get(j).resetPosition();
+                    
                 }
             }
         }
@@ -168,10 +169,15 @@ public void actionPerformed(ActionEvent e) {
 
     // Iterate over bullets only if it is not null
     if (bullets != null) {
-        for (Bullet bullet : bullets) {
-            bullet.move();
+    List<Bullet> bulletsToRemove = new ArrayList<>();
+    for (Bullet bullet : bullets) {
+        bullet.move(meteors);  // Pass the list of meteors to the move method
+        if (bullet.isCollisionDetected()) {
+            bulletsToRemove.add(bullet);
         }
     }
+    bullets.removeAll(bulletsToRemove);  // Remove bullets with collision detected
+}
 
     if (interactions != null) {
         interactions.checkCollisions();
