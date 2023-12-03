@@ -42,7 +42,7 @@ public class Interactions {
         
         for (Bullet bullet : bullets) {
             Rectangle bulletBounds = new Rectangle(bullet.getX(), bullet.getY(), bullet.getWidth(), bullet.getHeight());
-            if (!bullet.isCollisionDetected() && bulletBounds.intersects(meteor.getBounds())) {
+            if (!bullet.isCollisionDetected() && bulletBounds.intersects(bullet.getBounds())) {
                 handleCollision(bullet, meteor);
             }
         }
