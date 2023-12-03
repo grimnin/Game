@@ -14,6 +14,9 @@ public class Bullet {
     private int x, y;
     private int speed;
     private Shape bulletShape;
+    
+    
+
 
     public Bullet(int startX, int startY, int speed) {
         this.x = startX;

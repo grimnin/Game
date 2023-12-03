@@ -20,6 +20,8 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
     private Fuel fuel;
     private boolean isGameOver = false;
     private List<Bullet> bullets;
+    private long lastShotTime;
+    private final int shotDelay = 500; // Odstęp czasowy w milisekundach (np. 500 ms)
 
     private int backgroundY = 0;
     private int backgroundSpeed = 0;  // Adjust the speed as needed
@@ -142,13 +144,15 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
     }
     
     private void createBullet() {
-    if (spaceShip != null) {
+    if (spaceShip != null && System.currentTimeMillis() - lastShotTime > shotDelay) {
         int bulletX = spaceShip.getShipX() + spaceShip.getShipWidth() / 2;
         int bulletY = spaceShip.getShipY();
-        Bullet bullet = new Bullet(bulletX, bulletY, 10); // Adjust the speed as needed
+        Bullet bullet = new Bullet(bulletX, bulletY, 10); // Dostosuj prędkość według potrzeb
         bullets.add(bullet);
+        lastShotTime = System.currentTimeMillis(); // Aktualizuj czas ostatniego strzału
     }
 }
+
     
 
     @Override
