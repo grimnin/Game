@@ -19,12 +19,19 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
     private Interactions interactions;
     private Fuel fuel;
     private boolean isGameOver = false;
+    private List<Bullet> bullets;
+
+    private int backgroundY = 0;
+    private int backgroundSpeed = 0;  // Adjust the speed as needed
 
     public SpaceShipComponent() {
-        initializeUI();
-        setupGame();
-        Sounds sounds = new Sounds();
-    }
+    initializeUI();
+    setupGame();
+    Sounds sounds = new Sounds();
+    this.bullets = new ArrayList<>(); // Initialize class field bullets here
+}
+
+
 
     private void initializeUI() {
         background = new ImageIcon(getClass().getResource("/pictures/kosmos.jpg"));
@@ -44,20 +51,26 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
             meteors.add(new Meteor(i * 75, -i * 100, meteorSpeed));
         }
 
-        
-
         // Generate only one fuel object
         if (fuel == null || !fuel.isFuelGenerated()) {
             fuel = new Fuel(getWidth(), getHeight(), meteorSpeed);
         }
-        interactions = new Interactions(spaceShip, meteors,fuel);
+        interactions = new Interactions(spaceShip, meteors, fuel);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        g.drawImage(background.getImage(), 0, 0, getWidth(), getHeight(), this);
+        // Move the background based on the backgroundSpeed
+        backgroundY += backgroundSpeed;
+        if (backgroundY >= getHeight()) {
+            backgroundY = 0;
+        }
+
+        // Draw the background
+        g.drawImage(background.getImage(), 0, -backgroundY, getWidth(), getHeight() + backgroundY, this);
+        g.drawImage(background.getImage(), 0, getHeight() - backgroundY, getWidth(), getHeight() * 2 - backgroundY, this);
 
         if (spaceShip == null) {
             spaceShip = new Ship(getWidth(), getHeight());
@@ -76,6 +89,9 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         if (fuel != null) {
             fuel.draw(g);
         }
+        for (Bullet bullet : bullets) {
+        bullet.draw(g);
+    }
     }
 
     private void moveMeteors() {
@@ -124,29 +140,52 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         spaceShip.move(getWidth(), getHeight());
         repaint();
     }
+    
+    private void createBullet() {
+    if (spaceShip != null) {
+        int bulletX = spaceShip.getShipX() + spaceShip.getShipWidth() / 2;
+        int bulletY = spaceShip.getShipY();
+        Bullet bullet = new Bullet(bulletX, bulletY, 10); // Adjust the speed as needed
+        bullets.add(bullet);
+    }
+}
+    
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        moveShip();
-        moveMeteors();
-        moveFuel();
+public void actionPerformed(ActionEvent e) {
+    moveShip();
+    moveMeteors();
+    moveFuel();
 
-        if (interactions != null) {
-            interactions.checkCollisions();
-        }
-
-        checkCollisions();
-
-        // Create a copy of the meteors list to avoid ConcurrentModificationException
-        List<Meteor> meteorsCopy = new ArrayList<>(meteors);
-        for (Meteor meteor : meteorsCopy) {
-            if (meteor.getBounds().getMaxY() >= getHeight()) {
-                meteor.resetPosition();
-            }
-        }
-
-        repaint();
+    // Check if bullets is null and initialize it if necessary
+    if (bullets == null) {
+        bullets = new ArrayList<>();
     }
+
+    // Iterate over bullets only if it is not null
+    if (bullets != null) {
+        for (Bullet bullet : bullets) {
+            bullet.move();
+        }
+    }
+
+    if (interactions != null) {
+        interactions.checkCollisions();
+    }
+
+    checkCollisions();
+
+    // Create a copy of the meteors list to avoid ConcurrentModificationException
+    List<Meteor> meteorsCopy = new ArrayList<>(meteors);
+    for (Meteor meteor : meteorsCopy) {
+        if (meteor.getBounds().getMaxY() >= getHeight()) {
+            meteor.resetPosition();
+        }
+    }
+
+    repaint();
+}
+
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -158,13 +197,18 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
 
         if (key == KeyEvent.VK_W) {
             spaceShip.moveUp();
-        } else if (key == KeyEvent.VK_S) {
+        }  if (key == KeyEvent.VK_S) {
             spaceShip.moveDown(getHeight());
-        } else if (key == KeyEvent.VK_A) {
+        }  if (key == KeyEvent.VK_A) {
             spaceShip.moveLeft();
-        } else if (key == KeyEvent.VK_D) {
+        }  if (key == KeyEvent.VK_D) {
             spaceShip.moveRight(getWidth());
         }
+        
+        if (key == KeyEvent.VK_SPACE) {
+        createBullet();
+    }
+        
     }
 
     @Override

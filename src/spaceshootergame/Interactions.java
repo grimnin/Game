@@ -9,6 +9,7 @@ public class Interactions {
     private List<Meteor> meteors;
     private int life=0;
     private Fuel fuel;
+    private boolean endOfTheGame=false;
 
     public Interactions(Ship spaceShip, List<Meteor> meteors,Fuel fuel) {
         this.spaceShip = spaceShip;
@@ -48,6 +49,7 @@ public class Interactions {
         System.out.println(life);
         meteor.resetPosition();
         if (life==3){
+            endOfTheGame=true;
             System.out.println("Koniec gry");
         }
     }
@@ -62,6 +64,10 @@ public class Interactions {
     fuel.setFuelGenerated(true);  // Set isFuelGenerated to true after handling the collision
     fuel.resetPosition(800, 600);
 }
+
+    public boolean isEndOfTheGame() {
+        return endOfTheGame;
+    }
 
     
 }
