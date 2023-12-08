@@ -83,7 +83,7 @@ public class Interactions {
     // Handle collision logic here
     // For example, you can set a flag for game over or take other actions
         fuel.setCollisionDetected(true);  // Mark collision as detected for this meteor
-        System.out.println("Fuel gathered!");
+
         fuel.addfuel();
         System.out.println(fuel.getCapacity());
         fuel.setFuelGenerated(true);  // Set isFuelGenerated to true after handling the collision

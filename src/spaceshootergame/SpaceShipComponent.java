@@ -22,7 +22,7 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
     private List<Bullet> bullets;
     private long lastShotTime;
     private final int shotDelay = 500; // Odstęp czasowy w milisekundach (np. 500 ms)
-
+    private Timer timer;
     private int backgroundY = 0;
     private int backgroundSpeed = 0;  // Adjust the speed as needed
 
@@ -41,8 +41,9 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         addKeyListener(this);
         setFocusable(true);
 
-        Timer timer = new Timer(10, this);
+         timer = new Timer(10, this);
         timer.start();
+        
     }
 
     private void setupGame() {
@@ -181,21 +182,28 @@ public void actionPerformed(ActionEvent e) {
 
     if (interactions != null) {
         interactions.checkCollisions();
+        endGame();
     }
 
     checkCollisions();
 
+
     // Create a copy of the meteors list to avoid ConcurrentModificationException
-    List<Meteor> meteorsCopy = new ArrayList<>(meteors);
-    for (Meteor meteor : meteorsCopy) {
-        if (meteor.getBounds().getMaxY() >= getHeight()) {
-            meteor.resetPosition();
-        }
-    }
+//    List<Meteor> meteorsCopy = new ArrayList<>(meteors);
+//    for (Meteor meteor : meteorsCopy) {
+//        if (meteor.getBounds().getMaxY() >= getHeight()) {
+//            meteor.resetPosition();
+//        }
+//    }
 
     repaint();
 }
 
+public void endGame(){
+if(interactions.isEndOfTheGame()||fuel.getCapacity()==0){
+    timer.stop();
+    }
+}
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -218,7 +226,12 @@ public void actionPerformed(ActionEvent e) {
         if (key == KeyEvent.VK_SPACE) {
         createBullet();
     }
-        
+        if (key == KeyEvent.VK_Z) {
+        timer.stop();
+    }
+      if (key == KeyEvent.VK_X) {
+        timer.restart();
+    }  
     }
 
     @Override
