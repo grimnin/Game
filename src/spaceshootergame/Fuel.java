@@ -107,5 +107,9 @@ public class Fuel {
     public void setCollisionDetected(boolean collisionDetected) {
         this.collisionDetected = collisionDetected;
     }
+
+    public void renewCapacity() {
+        this.capacity = 1000;
+    }
     
 }

@@ -94,6 +94,11 @@ public class Interactions {
         return endOfTheGame;
     }
 
+    public void ResetGame(){
+    life=0;
+    endOfTheGame=false;
+    
+    }
     
 }
 

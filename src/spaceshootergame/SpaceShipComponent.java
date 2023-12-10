@@ -25,7 +25,7 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
     private Timer timer;
     private int backgroundY = 0;
     private int backgroundSpeed = 0;  // Adjust the speed as needed
-
+    private Meteor meteor;
     public SpaceShipComponent() {
     initializeUI();
     setupGame();
@@ -51,7 +51,7 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         numberOfMeteors = (int) (Math.random() * 2) + 4;
 
         for (int i = 0; i < numberOfMeteors; i++) {
-            meteors.add(new Meteor(i * 75, -i * 100, meteorSpeed));
+            meteors.add(meteor=new Meteor(i * 75, -i * 100, meteorSpeed));
         }
 
         // Generate only one fuel object
@@ -229,7 +229,22 @@ if(interactions.isEndOfTheGame()||fuel.getCapacity()==0){
         if (key == KeyEvent.VK_Z) {
         timer.stop();
     }
-      if (key == KeyEvent.VK_X) {
+      if (key == KeyEvent.VK_ENTER&&!timer.isRunning()) {
+          System.out.println(spaceShip.getShipX());
+          System.out.println(spaceShip.getShipY());
+          fuel.resetPosition(getWidth(), getHeight());
+          fuel.renewCapacity();
+          for(Bullet bullet:bullets){
+          bullet.setCollisionDetected(true);
+          }
+          //spaceShip = new Ship(getWidth(), getHeight());//zmień linijkę na resetowanie pozycji statku a nie twórz nowego obiektu
+          spaceShip.resetCoordinates(getWidth(), getHeight());
+          for(Meteor meteor:meteors){
+          meteor.resetPosition();
+          
+          }
+          
+          interactions.ResetGame();
         timer.restart();
     }  
     }
