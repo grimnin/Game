@@ -28,7 +28,7 @@ public class Fuel {
         this.fuelIcon = new ImageIcon(fuelImage.getScaledInstance(fuelIconWidth, fuelIconHeight, Image.SCALE_DEFAULT));
 
         Random random = new Random();
-        x = random.nextInt(screenWidth - 2*fuelIconWidth,fuelIconWidth) ; // Ensure screenWidth > fuelIconWidth
+        x = random.nextInt(700)+fuelIconWidth ; // Ensure screenWidth > fuelIconWidth
         y = -random.nextInt(screenHeight - fuelIconHeight,1) - fuelIconHeight; // Ensure a valid initial position
         rotationAngle = 0;  // Initial rotation angle
         isFuelGenerated = true;  // Initial setting to true
@@ -55,6 +55,9 @@ public class Fuel {
         int decreaseAmount = 1; // You can change this value as needed
         if (capacity > 0) {
             capacity -= decreaseAmount;
+        }
+        if(capacity>1000){
+        capacity=1000;
         }
     }
     

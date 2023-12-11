@@ -5,9 +5,12 @@
         <group>
             <file>file:/C:/Users/PC/Documents/NetBeansProjects/SpaceShooterGame/src/spaceshootergame/Meteor.java</file>
             <file>file:/C:/Users/PC/Documents/NetBeansProjects/SpaceShooterGame/src/spaceshootergame/Interactions.java</file>
+            <file>file:/C:/Users/PC/Documents/NetBeansProjects/SpaceShooterGame/src/spaceshootergame/UI.java</file>
             <file>file:/C:/Users/PC/Documents/NetBeansProjects/SpaceShooterGame/src/spaceshootergame/SpaceShipComponent.java</file>
+            <file>file:/C:/Users/PC/Documents/NetBeansProjects/SpaceShooterGame/src/spaceshootergame/Bullet.java</file>
             <file>file:/C:/Users/PC/Documents/NetBeansProjects/SpaceShooterGame/src/spaceshootergame/Fuel.java</file>
             <file>file:/C:/Users/PC/Documents/NetBeansProjects/SpaceShooterGame/src/spaceshootergame/Ship.java</file>
+            <file>file:/C:/Users/PC/Documents/NetBeansProjects/SpaceShooterGame/src/spaceshootergame/SpaceMain.java</file>
         </group>
     </open-files>
 </project-private>

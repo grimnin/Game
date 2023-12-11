@@ -7,10 +7,11 @@ public class Interactions {
 
     private Ship spaceShip;
     private List<Meteor> meteors;
-    private int life=0;
+    private int life=3;
     private Fuel fuel;
     private boolean endOfTheGame=false;
     private List<Bullet> bullets;
+    private int score=0;
 
     public Interactions(Ship spaceShip, List<Meteor> meteors,Fuel fuel,List<Bullet> bullets) {
         this.spaceShip = spaceShip;
@@ -61,10 +62,10 @@ public class Interactions {
         // For example, you can set a flag for game over or take other actions
         meteor.setCollisionDetected(true);  // Mark collision as detected for this meteor
         System.out.println("Collision detected with meteor!");
-        life++;
+        life--;
         System.out.println(life);
         meteor.resetPosition();
-        if (life==3){
+        if (life==0){
             endOfTheGame=true;
             System.out.println("Koniec gry");
         }
@@ -95,10 +96,24 @@ public class Interactions {
     }
 
     public void ResetGame(){
-    life=0;
+    life=3;
     endOfTheGame=false;
+    score=0;
     
     }
+
+    public int getLife() {
+        return life;
+    }
+    
+    public void addScore(){
+    score+=10;
+    }
+
+    public int getScore() {
+        return score;
+    }
+    
     
 }
 

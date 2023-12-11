@@ -12,6 +12,7 @@ import java.util.List;
 public class SpaceShipComponent extends JComponent implements ActionListener, KeyListener {
 
     private Ship spaceShip;
+    
     private ImageIcon background;
     private List<Meteor> meteors;
     private final int meteorSpeed = 5;
@@ -23,9 +24,13 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
     private long lastShotTime;
     private final int shotDelay = 500; // Odstęp czasowy w milisekundach (np. 500 ms)
     private Timer timer;
-    private int backgroundY = 0;
-    private int backgroundSpeed = 0;  // Adjust the speed as needed
+    private int backgroundY = 20;
+    private int backgroundSpeed = 20;  // Adjust the speed as needed
     private Meteor meteor;
+    private UI ui;
+    
+    
+    
     public SpaceShipComponent() {
     initializeUI();
     setupGame();
@@ -79,6 +84,7 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
             spaceShip = new Ship(getWidth(), getHeight());
             if (interactions != null) {
                 interactions.setSpaceShip(spaceShip);
+                
             }
         }
 
@@ -95,6 +101,8 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         for (Bullet bullet : bullets) {
         bullet.draw(g);
     }
+        ui=new UI(spaceShip,interactions,fuel);
+        ui.draw(g);
     }
 
     private void moveMeteors() {
@@ -182,19 +190,11 @@ public void actionPerformed(ActionEvent e) {
 
     if (interactions != null) {
         interactions.checkCollisions();
+        interactions.addScore();
         endGame();
     }
 
     checkCollisions();
-
-
-    // Create a copy of the meteors list to avoid ConcurrentModificationException
-//    List<Meteor> meteorsCopy = new ArrayList<>(meteors);
-//    for (Meteor meteor : meteorsCopy) {
-//        if (meteor.getBounds().getMaxY() >= getHeight()) {
-//            meteor.resetPosition();
-//        }
-//    }
 
     repaint();
 }
@@ -226,18 +226,13 @@ if(interactions.isEndOfTheGame()||fuel.getCapacity()==0){
         if (key == KeyEvent.VK_SPACE) {
         createBullet();
     }
-        if (key == KeyEvent.VK_Z) {
-        timer.stop();
-    }
       if (key == KeyEvent.VK_ENTER&&!timer.isRunning()) {
-          System.out.println(spaceShip.getShipX());
-          System.out.println(spaceShip.getShipY());
+         
           fuel.resetPosition(getWidth(), getHeight());
           fuel.renewCapacity();
           for(Bullet bullet:bullets){
           bullet.setCollisionDetected(true);
           }
-          //spaceShip = new Ship(getWidth(), getHeight());//zmień linijkę na resetowanie pozycji statku a nie twórz nowego obiektu
           spaceShip.resetCoordinates(getWidth(), getHeight());
           for(Meteor meteor:meteors){
           meteor.resetPosition();
@@ -247,7 +242,7 @@ if(interactions.isEndOfTheGame()||fuel.getCapacity()==0){
           interactions.ResetGame();
         timer.restart();
     }  
-    }
+    } 
 
     @Override
     public void keyReleased(KeyEvent e) {

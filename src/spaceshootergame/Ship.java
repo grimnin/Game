@@ -7,6 +7,13 @@ public class Ship {
     private ImageIcon ship;
     private int shipX, shipY;
     private int shipWidth, shipHeight;
+    
+    public Ship(){
+        shipWidth = 25;
+        shipHeight = 25;
+    ship = new ImageIcon(getClass().getResource("/pictures/statek.png"));
+        ship.setImage(ship.getImage().getScaledInstance(shipWidth, shipHeight, Image.SCALE_DEFAULT));
+    }
 
     public Ship(int screenWidth, int screenHeight) {
         shipWidth = 100;
