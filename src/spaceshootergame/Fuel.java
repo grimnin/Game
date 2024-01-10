@@ -14,6 +14,8 @@ public class Fuel {
     private int capacity;
     private int can;
     private boolean collisionDetected;
+    private final int width=784;
+    private final int height=600;
 
     public Fuel(int screenWidth, int screenHeight, int speed) {
         this.speed = speed;
@@ -28,8 +30,8 @@ public class Fuel {
         this.fuelIcon = new ImageIcon(fuelImage.getScaledInstance(fuelIconWidth, fuelIconHeight, Image.SCALE_DEFAULT));
 
         Random random = new Random();
-        x = random.nextInt(700)+fuelIconWidth ; // Ensure screenWidth > fuelIconWidth
-        y = -random.nextInt(screenHeight - fuelIconHeight,1) - fuelIconHeight; // Ensure a valid initial position
+        x = random.nextInt(width-2*fuelIconWidth)+fuelIconWidth ; // Ensure screenWidth > fuelIconWidth
+        y = -random.nextInt(height) - fuelIconHeight; // Ensure a valid initial position
         rotationAngle = 0;  // Initial rotation angle
         isFuelGenerated = true;  // Initial setting to true
         capacity=1000;
@@ -65,9 +67,9 @@ public class Fuel {
         y += speed;
         rotationAngle += 5;  // Increment the rotation angle
 
-        if (y >600) {
-            resetPosition(width,heigth);
-            System.out.println("Pojemność: "+capacity);
+        if (y >height) {
+            resetPosition();
+            
         }
 
         decreaseCapacity(); // Call the method to decrease the capacity
@@ -77,11 +79,11 @@ public class Fuel {
         return new Rectangle(x, y, fuelIcon.getIconWidth(), fuelIcon.getIconHeight());
     }
 
-    public void resetPosition(int width,int heigth) {
+    public void resetPosition() {
     Random random = new Random();
         
     x = random.nextInt(width - 2*fuelIcon.getIconWidth())+fuelIcon.getIconWidth() ; // Adjust as needed
-    y = -random.nextInt(heigth) - fuelIcon.getIconHeight();
+    y = -random.nextInt(height) - fuelIcon.getIconHeight();
     rotationAngle = 0;  // Reset rotation angle
     isFuelGenerated = true;  // Set isFuelGenerated to true
     collisionDetected = false;  // Reset collision detection

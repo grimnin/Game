@@ -26,8 +26,10 @@ public class UI {
         // Draw the number of lives
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.YELLOW);
+        
         Font font = new Font("Arial", Font.PLAIN, 22);
-        g2d.drawString("X" + interactions.getLife(), 50, 30);
+        g2d.setFont(font);
+        g2d.drawString("X" + interactions.getLife(), 50, 35);
 
         // Draw fuel capacity
         int capacityX = 0;
@@ -60,9 +62,32 @@ public class UI {
         g2d.setColor(Color.GREEN);
         g2d.drawString("Score: " + interactions.getScore(), 325, 50);
         
+        if (interactions.isEndOfTheGame()||fuel.getCapacity() == 0) {
+            // Jeśli koniec gry, wyświetl animowany tekst
+            drawGameOverText(g);}
         
         
-        
+    }
+    private void drawGameOverText(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        Font font = new Font("Arial", Font.BOLD, 30);
+        g2d.setFont(font);
+        g2d.setColor(Color.RED);
+
+        String gameOverText = "You died. Press enter to play again or esc to quit." + 
+                "";
+
+        // Pobierz wymiary tekstu
+        FontMetrics fontMetrics = g2d.getFontMetrics();
+        int textWidth = fontMetrics.stringWidth(gameOverText);
+        int textHeight = fontMetrics.getHeight();
+
+        // Oblicz pozycję tekstu na środku ekranu
+        int x = (SpaceMain.getScreenWidth() - textWidth) / 2;
+        int y = (SpaceMain.getScreenHeight() - textHeight) / 2;
+
+        // Narysuj tekst
+        g2d.drawString(gameOverText, x, y);
     }
     
 }

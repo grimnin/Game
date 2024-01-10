@@ -24,17 +24,19 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
     private long lastShotTime;
     private final int shotDelay = 500; // Odstęp czasowy w milisekundach (np. 500 ms)
     private Timer timer;
-    private int backgroundY = 20;
-    private int backgroundSpeed = 20;  // Adjust the speed as needed
+    private int backgroundY = 0;
+    private int backgroundSpeed = 3;  // Adjust the speed as needed
     private Meteor meteor;
     private UI ui;
+    private Sounds sounds;
+    
     
     
     
     public SpaceShipComponent() {
     initializeUI();
     setupGame();
-    Sounds sounds = new Sounds();
+     sounds = new Sounds();
     this.bullets = new ArrayList<>(); // Initialize class field bullets here
 }
 
@@ -77,8 +79,8 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         }
 
         // Draw the background
-        g.drawImage(background.getImage(), 0, -backgroundY, getWidth(), getHeight() + backgroundY, this);
-        g.drawImage(background.getImage(), 0, getHeight() - backgroundY, getWidth(), getHeight() * 2 - backgroundY, this);
+        g.drawImage(background.getImage(), 0, backgroundY, getWidth(), getHeight() , this);
+        g.drawImage(background.getImage(), 0,  backgroundY-getHeight() , getWidth(), getHeight() , this);
 
         if (spaceShip == null) {
             spaceShip = new Ship(getWidth(), getHeight());
@@ -128,7 +130,7 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
     private void resetFuelPositionIfCollision(Meteor meteor) {
         Rectangle meteorBounds = meteor.getBounds();
         while (fuel.getBounds().intersects(meteorBounds)) {
-            fuel.resetPosition(getWidth(), getHeight());
+            fuel.resetPosition();
         }
     }
 
@@ -159,6 +161,7 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         int bulletY = spaceShip.getShipY();
         Bullet bullet = new Bullet(bulletX, bulletY, 10); // Dostosuj prędkość według potrzeb
         bullets.add(bullet);
+        sounds.playBlasterSound();
         lastShotTime = System.currentTimeMillis(); // Aktualizuj czas ostatniego strzału
     }
 }
@@ -201,6 +204,7 @@ public void actionPerformed(ActionEvent e) {
 
 public void endGame(){
 if(interactions.isEndOfTheGame()||fuel.getCapacity()==0){
+    
     timer.stop();
     }
 }
@@ -225,10 +229,12 @@ if(interactions.isEndOfTheGame()||fuel.getCapacity()==0){
         
         if (key == KeyEvent.VK_SPACE) {
         createBullet();
+        
+        
     }
       if (key == KeyEvent.VK_ENTER&&!timer.isRunning()) {
          
-          fuel.resetPosition(getWidth(), getHeight());
+          fuel.resetPosition();
           fuel.renewCapacity();
           for(Bullet bullet:bullets){
           bullet.setCollisionDetected(true);
@@ -252,7 +258,7 @@ if(interactions.isEndOfTheGame()||fuel.getCapacity()==0){
         JFrame frame = new JFrame("Space Game");
         SpaceShipComponent spaceShipComponent = new SpaceShipComponent();
         frame.add(spaceShipComponent);
-        frame.setSize(800, 600);
+        frame.setSize(SpaceMain.getScreenWidth(), SpaceMain.getScreenHeight());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setVisible(true);

@@ -30,12 +30,27 @@ public class Interactions {
     }
 
     Rectangle shipBounds = new Rectangle(spaceShip.getShipX(), spaceShip.getShipY(), spaceShip.getShipWidth(), spaceShip.getShipHeight());
-
+    
+    float shipMiddleX=spaceShip.getShipX()+spaceShip.getShipWidth()/2;
+    float shipMiddleY=spaceShip.getShipY()+spaceShip.getShipHeight()/2;
+    float shipRadius=spaceShip.getShipHeight()/2;
+    
+    
+    
     for (Meteor meteor : meteors) {
         
+        double deltaX = shipMiddleX - meteor.getMiddleX();
+        double deltaY = shipMiddleY - meteor.getMiddleY();
+
+        // Wykorzystanie wzoru na odległość między punktami w dwuwymiarowej przestrzeni
+        double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+        
+    
 
         // Check collision between ship and meteor
-        if (!meteor.isCollisionDetected() && shipBounds.intersects(meteor.getBounds())) {
+        if (!meteor.isCollisionDetected() && distance<(meteor.getRadius()+shipRadius)) {
+            Sounds.playCrashSound();
             handleCollision(meteor);
         }
 
@@ -61,20 +76,20 @@ public class Interactions {
         // Handle collision logic here
         // For example, you can set a flag for game over or take other actions
         meteor.setCollisionDetected(true);  // Mark collision as detected for this meteor
-        System.out.println("Collision detected with meteor!");
+        
         life--;
         System.out.println(life);
         meteor.resetPosition();
         if (life==0){
             endOfTheGame=true;
-            System.out.println("Koniec gry");
+            
         }
     }
     
     private void handleCollision(Bullet bullet, Meteor meteor) {
     // Handle collision logic here
     // For example, you can set a flag for game over or take other actions
-    System.out.println("Projectile hit the meteor!");
+    
     bullet.setCollisionDetected(true);  // Mark collision as detected for this bullet
     meteor.resetPosition();
 }
@@ -86,9 +101,9 @@ public class Interactions {
         fuel.setCollisionDetected(true);  // Mark collision as detected for this meteor
 
         fuel.addfuel();
-        System.out.println(fuel.getCapacity());
+        
         fuel.setFuelGenerated(true);  // Set isFuelGenerated to true after handling the collision
-        fuel.resetPosition(800, 600);
+        fuel.resetPosition();
 }
 
     public boolean isEndOfTheGame() {

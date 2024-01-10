@@ -100,7 +100,6 @@ public class Ship {
     public void resetCoordinates(int screenWidth, int screenHeight){
         
     this.shipX=screenWidth / 2 - shipWidth / 2;
-     shipY = screenHeight - shipHeight;System.out.println("sx- "+shipX);
-        System.out.println("sy- "+shipY);
+     shipY = screenHeight - shipHeight;
     }
 }

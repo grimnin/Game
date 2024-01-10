@@ -11,19 +11,25 @@ import javax.swing.JFrame;
  * @author PC
  */
 public class SpaceMain {
-
-    /**
-     * @param args the command line arguments
-     */
+private final static int screenWidth=800;
+private final static int screenHeight=600;
     public static void main(String[] args) {
             
         JFrame frame = new JFrame("Space Game");
-        SpaceShipComponent spaceShipComponent = new SpaceShipComponent();
-        frame.add(spaceShipComponent);
-        frame.setSize(800, 600);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
-        frame.setVisible(true);
+    SpaceShipComponent spaceShipComponent = new SpaceShipComponent();
+    frame.add(spaceShipComponent);
+    frame.setSize(screenWidth, screenHeight); // Ustawiamy rozmiar okna gry
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setResizable(false);
+    frame.setVisible(true);
+    }
+
+    public static int getScreenWidth() {
+        return screenWidth;
+    }
+
+    public static int getScreenHeight() {
+        return screenHeight;
     }
     
 }
