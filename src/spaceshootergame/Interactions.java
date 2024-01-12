@@ -1,3 +1,4 @@
+
 package spaceshootergame;
 
 import java.awt.Rectangle;
@@ -12,6 +13,7 @@ public class Interactions {
     private boolean endOfTheGame=false;
     private List<Bullet> bullets;
     private int score=0;
+    private ExplosionAnimation explosionAnimation;
 
     public Interactions(Ship spaceShip, List<Meteor> meteors,Fuel fuel,List<Bullet> bullets) {
         this.spaceShip = spaceShip;
@@ -73,18 +75,41 @@ public class Interactions {
 
 
     private void handleCollision(Meteor meteor) {
-        // Handle collision logic here
-        // For example, you can set a flag for game over or take other actions
-        meteor.setCollisionDetected(true);  // Mark collision as detected for this meteor
-        
-        life--;
-        System.out.println(life);
-        meteor.resetPosition();
-        if (life==0){
-            endOfTheGame=true;
-            
+    // Handle collision logic here
+    // For example, you can set a flag for game over or take other actions
+    meteor.setCollisionDetected(true);  // Mark collision as detected for this meteor
+
+    life--;
+
+    // Trigger explosion animation only when spaceship collides with a meteor
+    if (spaceShip != null) {
+        Rectangle shipBounds = new Rectangle(spaceShip.getShipX(), spaceShip.getShipY(), spaceShip.getShipWidth(), spaceShip.getShipHeight());
+
+        float shipMiddleX = spaceShip.getShipX() + spaceShip.getShipWidth() / 2;
+        float shipMiddleY = spaceShip.getShipY() + spaceShip.getShipHeight() / 2;
+        float shipRadius = spaceShip.getShipHeight() / 2;
+
+        double deltaX = shipMiddleX - meteor.getMiddleX();
+        double deltaY = shipMiddleY - meteor.getMiddleY();
+
+        // Wykorzystanie wzoru na odległość między punktami w dwuwymiarowej przestrzeni
+        double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+        // Check collision between ship and meteor
+        if (!meteor.isCollisionDetected() && distance < (meteor.getRadius() + shipRadius)) {
+            // Trigger explosion animation
+            explosionAnimation.setBounds(spaceShip.getShipX(), spaceShip.getShipY(), explosionAnimation.getPreferredSize().width, explosionAnimation.getPreferredSize().height);
+            explosionAnimation.startAnimation();
         }
     }
+
+    meteor.resetPosition();
+    if (life == 0) {
+        endOfTheGame = true;
+    }
+}
+
+
     
     private void handleCollision(Bullet bullet, Meteor meteor) {
     // Handle collision logic here
@@ -131,4 +156,3 @@ public class Interactions {
     
     
 }
-

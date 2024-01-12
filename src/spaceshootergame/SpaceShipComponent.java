@@ -12,7 +12,6 @@ import java.util.List;
 public class SpaceShipComponent extends JComponent implements ActionListener, KeyListener {
 
     private Ship spaceShip;
-    
     private ImageIcon background;
     private List<Meteor> meteors;
     private final int meteorSpeed = 5;
@@ -22,35 +21,29 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
     private boolean isGameOver = false;
     private List<Bullet> bullets;
     private long lastShotTime;
-    private final int shotDelay = 500; // Odstęp czasowy w milisekundach (np. 500 ms)
+    private final int shotDelay = 500; // Time delay in milliseconds (e.g., 500 ms)
     private Timer timer;
     private int backgroundY = 0;
     private int backgroundSpeed = 3;  // Adjust the speed as needed
     private Meteor meteor;
     private UI ui;
     private Sounds sounds;
-    
-    
-    
-    
+    private ExplosionAnimation explosionAnimation;
+
     public SpaceShipComponent() {
-    initializeUI();
-    setupGame();
-     sounds = new Sounds();
-    this.bullets = new ArrayList<>(); // Initialize class field bullets here
-}
-
-
+        initializeUI();
+        setupGame();
+        sounds = new Sounds();
+        this.bullets = new ArrayList<>(); // Initialize class field bullets here
+        explosionAnimation = new ExplosionAnimation();
+    }
 
     private void initializeUI() {
         background = new ImageIcon(getClass().getResource("/pictures/kosmos.jpg"));
-
         addKeyListener(this);
         setFocusable(true);
-
-         timer = new Timer(10, this);
+        timer = new Timer(10, this);
         timer.start();
-        
     }
 
     private void setupGame() {
@@ -58,14 +51,14 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         numberOfMeteors = (int) (Math.random() * 2) + 4;
 
         for (int i = 0; i < numberOfMeteors; i++) {
-            meteors.add(meteor=new Meteor(i * 75, -i * 100, meteorSpeed));
+            meteors.add(meteor = new Meteor(i * 75, -i * 100, meteorSpeed));
         }
 
         // Generate only one fuel object
         if (fuel == null || !fuel.isFuelGenerated()) {
             fuel = new Fuel(getWidth(), getHeight(), meteorSpeed);
         }
-        interactions = new Interactions(spaceShip, meteors, fuel,bullets);
+        interactions = new Interactions(spaceShip, meteors, fuel, bullets);
     }
 
     @Override
@@ -79,14 +72,13 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         }
 
         // Draw the background
-        g.drawImage(background.getImage(), 0, backgroundY, getWidth(), getHeight() , this);
-        g.drawImage(background.getImage(), 0,  backgroundY-getHeight() , getWidth(), getHeight() , this);
+        g.drawImage(background.getImage(), 0, backgroundY, getWidth(), getHeight(), this);
+        g.drawImage(background.getImage(), 0, backgroundY - getHeight(), getWidth(), getHeight(), this);
 
         if (spaceShip == null) {
             spaceShip = new Ship(getWidth(), getHeight());
             if (interactions != null) {
                 interactions.setSpaceShip(spaceShip);
-                
             }
         }
 
@@ -101,10 +93,13 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
             fuel.draw(g);
         }
         for (Bullet bullet : bullets) {
-        bullet.draw(g);
-    }
-        ui=new UI(spaceShip,interactions,fuel);
+            bullet.draw(g);
+        }
+        ui = new UI(spaceShip, interactions, fuel);
         ui.draw(g);
+        if (explosionAnimation.isVisible()) {
+            explosionAnimation.paintComponent(g);
+        }
     }
 
     private void moveMeteors() {
@@ -140,7 +135,6 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
                 if (i != j && meteors.get(i).getBounds().intersects(meteors.get(j).getBounds())) {
                     meteors.get(i).resetPosition();
                     meteors.get(j).resetPosition();
-                    
                 }
             }
         }
@@ -154,113 +148,111 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         spaceShip.move(getWidth(), getHeight());
         repaint();
     }
-    
+
     private void createBullet() {
-    if (spaceShip != null && System.currentTimeMillis() - lastShotTime > shotDelay) {
-        int bulletX = spaceShip.getShipX() + spaceShip.getShipWidth() / 2;
-        int bulletY = spaceShip.getShipY();
-        Bullet bullet = new Bullet(bulletX, bulletY, 10); // Dostosuj prędkość według potrzeb
-        bullets.add(bullet);
-        sounds.playBlasterSound();
-        lastShotTime = System.currentTimeMillis(); // Aktualizuj czas ostatniego strzału
-    }
-}
-
-    
-
-    @Override
-public void actionPerformed(ActionEvent e) {
-    moveShip();
-    moveMeteors();
-    moveFuel();
-
-    // Check if bullets is null and initialize it if necessary
-    if (bullets == null) {
-        bullets = new ArrayList<>();
-    }
-
-    // Iterate over bullets only if it is not null
-    if (bullets != null) {
-    List<Bullet> bulletsToRemove = new ArrayList<>();
-    for (Bullet bullet : bullets) {
-        bullet.move(meteors);  // Pass the list of meteors to the move method
-        if (bullet.isCollisionDetected()) {
-            bulletsToRemove.add(bullet);
+        if (spaceShip != null && System.currentTimeMillis() - lastShotTime > shotDelay) {
+            int bulletX = spaceShip.getShipX() + spaceShip.getShipWidth() / 2;
+            int bulletY = spaceShip.getShipY();
+            Bullet bullet = new Bullet(bulletX, bulletY, 10); // Adjust speed as needed
+            bullets.add(bullet);
+            sounds.playBlasterSound();
+            lastShotTime = System.currentTimeMillis(); // Update the last shot time
         }
     }
-    bullets.removeAll(bulletsToRemove);  // Remove bullets with collision detected
-}
 
-    if (interactions != null) {
-        interactions.checkCollisions();
-        interactions.addScore();
-        endGame();
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        moveShip();
+        moveMeteors();
+        moveFuel();
+
+        // Check if bullets is null and initialize it if necessary
+        if (bullets == null) {
+            bullets = new ArrayList<>();
+        }
+
+        // Iterate over bullets only if it is not null
+        if (bullets != null) {
+            List<Bullet> bulletsToRemove = new ArrayList<>();
+            for (Bullet bullet : bullets) {
+                bullet.move(meteors);  // Pass the list of meteors to the move method
+                if (bullet.isCollisionDetected()) {
+                    bulletsToRemove.add(bullet);
+                }
+            }
+            bullets.removeAll(bulletsToRemove);  // Remove bullets with collision detected
+        }
+
+        if (interactions != null) {
+            interactions.checkCollisions();
+            interactions.addScore();
+            endGame();
+        }
+
+        checkCollisions();
+
+        repaint();
     }
 
-    checkCollisions();
-
-    repaint();
-}
-
-public void endGame(){
-if(interactions.isEndOfTheGame()||fuel.getCapacity()==0){
-    
-    timer.stop();
+    public void endGame() {
+        if (interactions.isEndOfTheGame() || fuel.getCapacity() == 0) {
+            timer.stop();
+        }
     }
-}
 
     @Override
     public void keyTyped(KeyEvent e) {
+
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
+        switch (key) {
+            case KeyEvent.VK_W:
+                spaceShip.moveUp();
+                break;
+            case KeyEvent.VK_S:
+                spaceShip.moveDown(getHeight());
+                break;
+            case KeyEvent.VK_A:
+                spaceShip.moveLeft();
+                break;
+            case KeyEvent.VK_D:
+                spaceShip.moveRight(getWidth());
+                break;
+            case KeyEvent.VK_SPACE:
+                if (timer.isRunning()) {
+                    createBullet();
+                }
+                break;
+            case KeyEvent.VK_ESCAPE:
+                if (!timer.isRunning()) {
+                    System.exit(0);
+                }
+                break;
+            case KeyEvent.VK_ENTER:
+                if (!timer.isRunning()) {
+                    fuel.resetPosition();
+                    fuel.renewCapacity();
+                    for (Bullet bullet : bullets) {
+                        bullet.setCollisionDetected(true);
+                    }
+                    spaceShip.resetCoordinates(getWidth(), getHeight());
+                    for (Meteor meteor : meteors) {
+                        meteor.resetPosition();
+                    }
 
-        if (key == KeyEvent.VK_W) {
-            spaceShip.moveUp();
-        }  if (key == KeyEvent.VK_S) {
-            spaceShip.moveDown(getHeight());
-        }  if (key == KeyEvent.VK_A) {
-            spaceShip.moveLeft();
-        }  if (key == KeyEvent.VK_D) {
-            spaceShip.moveRight(getWidth());
+                    interactions.ResetGame();
+                    timer.restart();
+                }
+                break;
+            default:
+                break;
         }
-        
-        if (key == KeyEvent.VK_SPACE) {
-        createBullet();
-        
-        
     }
-      if (key == KeyEvent.VK_ENTER&&!timer.isRunning()) {
-         
-          fuel.resetPosition();
-          fuel.renewCapacity();
-          for(Bullet bullet:bullets){
-          bullet.setCollisionDetected(true);
-          }
-          spaceShip.resetCoordinates(getWidth(), getHeight());
-          for(Meteor meteor:meteors){
-          meteor.resetPosition();
-          
-          }
-          
-          interactions.ResetGame();
-        timer.restart();
-    }  
-    } 
 
     @Override
     public void keyReleased(KeyEvent e) {
-    }
-
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Space Game");
-        SpaceShipComponent spaceShipComponent = new SpaceShipComponent();
-        frame.add(spaceShipComponent);
-        frame.setSize(SpaceMain.getScreenWidth(), SpaceMain.getScreenHeight());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
-        frame.setVisible(true);
     }
 }
