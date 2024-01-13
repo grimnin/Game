@@ -21,29 +21,34 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
     private boolean isGameOver = false;
     private List<Bullet> bullets;
     private long lastShotTime;
-    private final int shotDelay = 500; // Time delay in milliseconds (e.g., 500 ms)
+    private final int shotDelay = 500;
     private Timer timer;
     private int backgroundY = 0;
-    private int backgroundSpeed = 3;  // Adjust the speed as needed
+    private int backgroundSpeed = 3;
     private Meteor meteor;
     private UI ui;
     private Sounds sounds;
     private ExplosionAnimation explosionAnimation;
+    private boolean gameResetting = false;
+    private boolean restartingAnimation = false;
 
     public SpaceShipComponent() {
         initializeUI();
-        setupGame();
         sounds = new Sounds();
-        this.bullets = new ArrayList<>(); // Initialize class field bullets here
-        explosionAnimation = new ExplosionAnimation();
+        this.bullets = new ArrayList<>();
+        this.explosionAnimation = new ExplosionAnimation();
+        add(explosionAnimation);
+        explosionAnimation.setVisible(false);
+        setupGame();
+        this.ui = new UI(spaceShip, interactions, fuel);
+        timer = new Timer(10, this);
+        timer.start();
     }
 
     private void initializeUI() {
         background = new ImageIcon(getClass().getResource("/pictures/kosmos.jpg"));
         addKeyListener(this);
         setFocusable(true);
-        timer = new Timer(10, this);
-        timer.start();
     }
 
     private void setupGame() {
@@ -54,24 +59,26 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
             meteors.add(meteor = new Meteor(i * 75, -i * 100, meteorSpeed));
         }
 
-        // Generate only one fuel object
         if (fuel == null || !fuel.isFuelGenerated()) {
             fuel = new Fuel(getWidth(), getHeight(), meteorSpeed);
         }
-        interactions = new Interactions(spaceShip, meteors, fuel, bullets);
+        interactions = new Interactions(spaceShip, meteors, fuel, bullets, explosionAnimation);
+    }
+
+    private void resetExplosionAnimation() {
+        explosionAnimation.stopAnimation();
+        explosionAnimation.setVisible(false);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // Move the background based on the backgroundSpeed
         backgroundY += backgroundSpeed;
         if (backgroundY >= getHeight()) {
             backgroundY = 0;
         }
 
-        // Draw the background
         g.drawImage(background.getImage(), 0, backgroundY, getWidth(), getHeight(), this);
         g.drawImage(background.getImage(), 0, backgroundY - getHeight(), getWidth(), getHeight(), this);
 
@@ -88,15 +95,15 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
             meteor.draw(g);
         }
 
-        // Draw fuel
         if (fuel != null) {
             fuel.draw(g);
         }
         for (Bullet bullet : bullets) {
             bullet.draw(g);
         }
-        ui = new UI(spaceShip, interactions, fuel);
+
         ui.draw(g);
+
         if (explosionAnimation.isVisible()) {
             explosionAnimation.paintComponent(g);
         }
@@ -112,7 +119,6 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         if (fuel != null) {
             fuel.move(getWidth(), getHeight());
 
-            // Check for collisions between fuel and meteors
             for (Meteor meteor : meteors) {
                 Rectangle meteorBounds = meteor.getBounds();
                 if (fuel.getBounds().intersects(meteorBounds)) {
@@ -153,10 +159,10 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         if (spaceShip != null && System.currentTimeMillis() - lastShotTime > shotDelay) {
             int bulletX = spaceShip.getShipX() + spaceShip.getShipWidth() / 2;
             int bulletY = spaceShip.getShipY();
-            Bullet bullet = new Bullet(bulletX, bulletY, 10); // Adjust speed as needed
+            Bullet bullet = new Bullet(bulletX, bulletY, 10);
             bullets.add(bullet);
             sounds.playBlasterSound();
-            lastShotTime = System.currentTimeMillis(); // Update the last shot time
+            lastShotTime = System.currentTimeMillis();
         }
     }
 
@@ -166,21 +172,19 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         moveMeteors();
         moveFuel();
 
-        // Check if bullets is null and initialize it if necessary
         if (bullets == null) {
             bullets = new ArrayList<>();
         }
 
-        // Iterate over bullets only if it is not null
         if (bullets != null) {
             List<Bullet> bulletsToRemove = new ArrayList<>();
             for (Bullet bullet : bullets) {
-                bullet.move(meteors);  // Pass the list of meteors to the move method
+                bullet.move(meteors);
                 if (bullet.isCollisionDetected()) {
                     bulletsToRemove.add(bullet);
                 }
             }
-            bullets.removeAll(bulletsToRemove);  // Remove bullets with collision detected
+            bullets.removeAll(bulletsToRemove);
         }
 
         if (interactions != null) {
@@ -192,17 +196,29 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
         checkCollisions();
 
         repaint();
+
+        if (gameResetting && !explosionAnimation.isVisible() && !restartingAnimation) {
+            restartAnimation();
+        }
+    }
+
+    private void restartAnimation() {
+        restartingAnimation = true;
+        explosionAnimation.stopAnimation();
+        explosionAnimation.setVisible(false);
+        restartingAnimation = false;
+        gameResetting = false;
     }
 
     public void endGame() {
         if (interactions.isEndOfTheGame() || fuel.getCapacity() == 0) {
+            resetExplosionAnimation();
             timer.stop();
         }
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
-
     }
 
     @Override
@@ -244,6 +260,7 @@ public class SpaceShipComponent extends JComponent implements ActionListener, Ke
                     }
 
                     interactions.ResetGame();
+                    gameResetting = true;
                     timer.restart();
                 }
                 break;
