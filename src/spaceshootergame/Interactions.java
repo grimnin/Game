@@ -51,6 +51,8 @@ public class Interactions {
                     handleCollision(meteor);
 
                     if (!explosionAnimationRunning && !meteorCollisionHandled) {
+                        // Modyfikacja współrzędnych animacji eksplozji
+                        explosionAnimation.setLocation(spaceShip.getShipX(), spaceShip.getShipY());
                         explosionAnimation.startAnimation();
                         explosionAnimationRunning = true;
                         meteorCollisionHandled = true;
@@ -79,45 +81,48 @@ public class Interactions {
     }
 
     private void handleCollision(Meteor meteor) {
-        if (meteor.isCollisionDetected()) {
-            return;
-        }
+    if (meteor.isCollisionDetected()) {
+        return;
+    }
 
-        meteor.setCollisionDetected(true);
-        life--;
+    meteor.setCollisionDetected(true);
+    life--;
 
-        if (spaceShip != null) {
-            float shipMiddleX = spaceShip.getShipX() + spaceShip.getShipWidth() / 2;
-            float shipMiddleY = spaceShip.getShipY() + spaceShip.getShipHeight() / 2;
-            float shipRadius = spaceShip.getShipHeight() / 2;
+    if (spaceShip != null) {
+        float shipMiddleX = spaceShip.getShipX() + spaceShip.getShipWidth() / 2;
+        float shipMiddleY = spaceShip.getShipY() + spaceShip.getShipHeight() / 2;
+        float shipRadius = spaceShip.getShipHeight() / 2;
 
-            double deltaX = shipMiddleX - meteor.getMiddleX();
-            double deltaY = shipMiddleY - meteor.getMiddleY();
+        double deltaX = shipMiddleX - meteor.getMiddleX();
+        double deltaY = shipMiddleY - meteor.getMiddleY();
 
-            double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-            if (distance < (meteor.getRadius() + shipRadius)) {
-                if (!explosionAnimationRunning) {
-                    explosionAnimation.startAnimation();
-                    explosionAnimationRunning = true;
-                }
-
-                meteorCollisionHandled = false;
-                meteor.setCollisionDetected(false);
+        if (distance < (meteor.getRadius() + shipRadius)) {
+            if (!explosionAnimationRunning) {
+                // Modyfikacja współrzędnych animacji eksplozji
+                explosionAnimation.setLocation(spaceShip.getShipX(), spaceShip.getShipY());
+                explosionAnimation.startAnimation();
+                explosionAnimationRunning = true;
             }
-        }
 
-        meteor.resetPosition();
-        if (life == 0) {
-            endOfTheGame = true;
-        }
-        
-        // Dodaj następujące linie, aby zresetować flagi po utracie wszystkich żyć:
-        if (endOfTheGame) {
-            explosionAnimationRunning = false;
             meteorCollisionHandled = false;
+            meteor.setCollisionDetected(false);
         }
     }
+
+    meteor.resetPosition();
+    if (life == 0) {
+        endOfTheGame = true;
+    }
+    
+    // Dodaj następujące linie, aby zresetować flagi po utracie wszystkich żyć:
+    if (endOfTheGame) {
+        explosionAnimationRunning = false;
+        meteorCollisionHandled = false;
+    }
+}
+
 
     private void handleCollision(Bullet bullet, Meteor meteor) {
         bullet.setCollisionDetected(true);

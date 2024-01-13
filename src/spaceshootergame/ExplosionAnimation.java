@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 
 public class ExplosionAnimation extends JPanel {
 
-    private static final int FRAME_SIZE = 60;
+    private static final int FRAME_SIZE = 70;
     private static final int NUM_ROWS = 4;
     private static final int NUM_COLUMNS = 4;
     private static final int FRAME_WIDTH = 60;
@@ -20,6 +20,8 @@ public class ExplosionAnimation extends JPanel {
     private BufferedImage animationImage;
     private int currentFrame = 0;
     private Timer animationTimer;
+    private int animationX;
+    private int animationY;
 
     public ExplosionAnimation() {
         loadAnimationImage();
@@ -32,6 +34,11 @@ public class ExplosionAnimation extends JPanel {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setLocation(int x, int y) {
+        animationX = x;
+        animationY = y;
     }
 
     public void startAnimation() {
@@ -79,7 +86,7 @@ public class ExplosionAnimation extends JPanel {
             int y = row * FRAME_HEIGHT;
 
             BufferedImage currentFrameImage = animationImage.getSubimage(x, y, FRAME_WIDTH, FRAME_HEIGHT);
-            g.drawImage(currentFrameImage, 0, 0, FRAME_SIZE, FRAME_SIZE, null);
+            g.drawImage(currentFrameImage, animationX, animationY, FRAME_SIZE, FRAME_SIZE, null);
         }
     }
 }
