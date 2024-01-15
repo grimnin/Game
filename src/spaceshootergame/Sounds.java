@@ -75,10 +75,4 @@ public class Sounds {
     }
    }
 
-
-    public static void main(String[] args) {
-        Sounds sounds = new Sounds();
-        // Odtwórz dźwięk blastera
-        sounds.playBlasterSound();
-    }
 }
